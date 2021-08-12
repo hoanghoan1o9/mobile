@@ -15,79 +15,88 @@ import {
   RefreshControl,
   FlatList,
   SectionList,
- } from 'react-native';
+  TextInput,
+  Button,
+  Alert,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
 
 const App = () => {
 
-  const [Sections, setSections] = useState([
-    {
-      title: 'Title 1',
-      data: ['Item 1-1', 'Item 1-2'],
-    },
-  ]);
-  const onRefresh = () => {
-    setRefreshing(true);
-    const adding_index = Sections.length + 1;
-    setSections([...Sections,
-    {
-      title: 'Title ' + adding_index,
-      data:
-        [
-          'Item ' + adding_index + '-1',
-          'Item ' + adding_index + '-2',
-        ],
-    },
-    ]);
-    setRefreshing(false);
+  const [name, setName] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const onPressHandler = () => {
+    if (name.length > 3) { setSubmitted(!submitted); }
+    else {
+      // Alert.alert('warning', 'the name must be longer than 3 characters', [
+      //   { text: 'Do not show again', onPress: () => console.warn('Do not show again Pressed!') },
+      //   { text: 'Cancel', onPress: () => console.warn('Cancel Pressed!') },
+      //   { text: 'OK', onPress: () => console.warn('OK Pressed!') },
+      // ], { cancelable: true, onDismiss: () => console.warn('Alert dismissed') })
+      ToastAndroid.show('the name must be longer than 3 characters',
+      ToastAndroid.LONG
+      );
+    }
   };
-  const [Refreshing, setRefreshing] = useState(false);
 
   return (
-    <SectionList
-      keyExtractor={(item, index) => index.toString()}
-      sections={Sections}
-      renderItem={({ item }) => (
-        <View style={styles.item}>
-          <Text style={styles.text_item}>{item}</Text>
-        </View>
-      )}
-      renderSectionHeader={({ section }) => (
-        <View style={styles.header}>
-          <Text style={styles.text_header}>{section.title}</Text>
-        </View>
-      )}
-      refreshControl={
-        < RefreshControl
-          refreshing={Refreshing}
-          onRefresh={onRefresh}
-        />
+    <View style={styles.body}>
+      <Text style={styles.text}>
+        Please write your name:
+      </Text>
+      <TextInput
+        style={styles.input}
+        placeholder='e.g Hoan'
+        onChangeText={(value) => setName(value)}
+      />
+      {/* <Button
+        title={submitted ? 'clear' : 'Submit'}
+        onPress={onPressHandler}
+        color='#00f'
+      /> */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={onPressHandler}
+        activeOpacity={0.2}
+      >
+        <Text style={styles.text}> {submitted ? 'clear' : 'Submit'}</Text>
+      </TouchableOpacity>
+      {submitted ?
+        <Text style={styles.text}>
+          You are registered as: {name}
+        </Text>
+        : null
       }
-    />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: '#4ae1fa',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-  },
-  item: {
-    borderBottomWidth: 1,
-    justifyContent: 'center',
+  body: {
+    flex: 1,
+    backgroundColor: '#ffffff',
     alignItems: 'center',
   },
-  text_header: {
+  text: {
     color: '#000000',
-    fontSize: 45,
-    fontStyle: 'italic',
+    fontSize: 20,
     margin: 10,
   },
-  text_item: {
-    color: '#000000',
-    fontSize: 35,
-    margin: 5,
+  input: {
+    width: 200,
+    borderWidth: 1,
+    borderColor: '#555',
+    borderRadius: 5,
+    textAlign: 'center',
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  button: {
+    width: 150,
+    height: 50,
+    backgroundColor: '#00ff00',
+    alignItems: 'center',
   },
 });
 
